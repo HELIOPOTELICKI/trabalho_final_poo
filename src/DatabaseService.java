@@ -1,15 +1,20 @@
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 public class DatabaseService {
 	private ArrayList<DBRow> items;
+	private Connection connection;
 	private Cache authorCache, tipoMaterialCache, editoraCache, 
 				  entidadeCache, localPublicacaoCache, palavraChaveCache, 
 				  meioDivulgacaoCache;
 	
 	public DatabaseService(Connection connection, ArrayList<DBRow> items) {
 		this.items = items;
+		this.connection = connection;
 		
 		this.authorCache = new Cache(connection, "Autor")
 			.withSelectQuery("select cd_autor from autor where nm_autor = ?;")
@@ -40,29 +45,106 @@ public class DatabaseService {
 				.withInsertQuery("insert into meio_divulgacao values(null, ?);");
 	}
 	
-	public void write() throws NoContentError, SQLException {
-		for(DBRow item: items) {
-			Integer autorId = this.authorCache.get(item.getAutor(), null);
+	private int writeMaterial(DBRow item, Integer autorId, Integer tipoMaterialId, Integer editoraId, Integer entidadeId, Integer localPublicacaoId, Integer palavraChaveId, Integer meioDivulgacaoId) throws SQLException {
+		String insertMaterialQuery = ""
+				+ "set @nm_titulo = ?, @ds_ano_producao = ?, @ds_ano_publicacao = ?, @ds_edicao = ?, @nr_paginas = ?, @ds_url_disponivel = ?, @nr_isbn = ?, @nr_issn = ?, @cd_tp_material = ?, @cd_tp_divulgacao = ?, @cd_local_publicacao = ?, @cd_editora = ?, @cd_entidade = ?; "
+				+ "insert ignore into material values(null, @nm_titulo, @ds_ano_producao, @ds_ano_publicacao, @ds_edicao, @nr_paginas, @ds_url_disponivel, @nr_isbn, @nr_issn, @cd_tp_material, @cd_tp_divulgacao, @cd_local_publicacao, @cd_editora, @cd_entidade) "
+				+ "on duplicate key update cd_material = LAST_INSERT_ID(cd_material), nm_titulo = @nm_titulo, ds_ano_producao = @ds_ano_producao, ds_ano_publicacao = @ds_ano_publicacao, ds_edicao = @ds_edicao, nr_paginas = @nr_paginas, ds_url_disponivel = @ds_url_disponivel, nr_isbn = @nr_isbn, nr_issn = @nr_issn, cd_tp_material = @cd_tp_material, cd_tp_divulgacao = @cd_tp_divulgacao, cd_local_publicacao = @cd_local_publicacao, cd_editora = @cd_editora, cd_entidade = @cd_entidade;";
+		
+		PreparedStatement stmt = this.connection.prepareStatement(insertMaterialQuery, Statement.RETURN_GENERATED_KEYS);
+		
+		stmt.setString(1, item.getTitulo().trim());
+		stmt.setString(2, item.getAnoProducao().trim());
+		stmt.setString(3, item.getAnoPublicacao().trim());
+		stmt.setString(4, item.getEdicao().trim());
+		stmt.setString(5, item.getPaginasMinutos().trim());
+		stmt.setString(6, item.getDisponivelEm().trim());
+		stmt.setString(7, item.getISBN().trim());
+		stmt.setString(8, item.getISSN().trim());
+		stmt.setInt(9, tipoMaterialId);
+		stmt.setInt(10, meioDivulgacaoId);
+		stmt.setInt(11, localPublicacaoId);
+		stmt.setInt(12, editoraId);
+		stmt.setInt(13, entidadeId);
+
+		stmt.executeUpdate();
+		ResultSet result = stmt.executeQuery("select LAST_INSERT_ID() as n");
+		result.next();
+
+		return result.getInt(1);
+	}
+	
+	public void write() throws NoContentException, RecordInsertionException, SQLException {
+		for(int index = 0; index < items.size(); index++) {
+			DBRow item = items.get(index);
+			Integer autorId, tipoMaterialId, editoraId, entidadeId, localPublicacaoId, palavraChaveId, meioDivulgacaoId;
+			Integer materialId;
 			
-			Integer tipoMaterialId = this.tipoMaterialCache.get(item.getTipoMaterial(), null);
-			
-			Integer editoraId = this.editoraCache.get(item.getEditora(), null);
-			
-			Integer entidadeId = this.entidadeCache.get(item.getEntidade(), (stmt) -> {
-				try {
-					stmt.setString(1, item.getEntidade()); 
-					stmt.setString(2, item.getTipoOrganizacao().contentEquals("governamental") ? "GO" : "NG");
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+			try {
+				autorId = this.authorCache.get(item.getAutor(), null);
+				tipoMaterialId = this.tipoMaterialCache.get(item.getTipoMaterial(), null);
+				editoraId = this.editoraCache.get(item.getEditora(), null);
+				localPublicacaoId = this.localPublicacaoCache.get(item.getLocalPublicacao(), null);
+				palavraChaveId = this.palavraChaveCache.get(item.getPalavrasChaveDescritores(), null);
+				meioDivulgacaoId = this.meioDivulgacaoCache.get(item.getMeioDivulgacao(), null);
+				
+				String entidade = item.getEntidade();
+				String tipoOrganizacao = item.getTipoOrganizacao();
+				
+				if(entidade.contentEquals("")) {
+					throw new NoContentException(0, "Entidade");
 				}
-			});
+				
+				if(tipoOrganizacao.contentEquals("")) {
+					throw new NoContentException(0, "Tipo de organização");
+				}
+				
+				if(item.getAnoProducao().contentEquals("")) {
+					throw new NoContentException(0, "Ano de Produção");
+				}
+				
+				if(item.getAnoPublicacao().contentEquals("")) {
+					throw new NoContentException(0, "Ano de Publicação");
+				}
+				
+				if(item.getPaginasMinutos().contentEquals("")) {
+					throw new NoContentException(0, "Número de páginas/Minutos");
+				}
+				
+				if(item.getDisponivelEm().contentEquals("")) {
+					throw new NoContentException(0, "Disponível em");
+				}
+				
+				if(item.getISBN().contentEquals("")) {
+					throw new NoContentException(0, "ISBN");
+				}
+				
+				if(item.getISSN().contentEquals("")) {
+					throw new NoContentException(0, "ISSN");
+				}
+				
+				entidadeId = this.entidadeCache.get(item.getEntidade(), (stmt) -> {
+					try {
+						stmt.setString(1, entidade); 
+						stmt.setString(2, tipoOrganizacao.contentEquals("governamental") ? "GO" : "NG");
+						
+						return null;
+					} catch(SQLException e) {
+						return e;
+					}
+				});
+			} catch(NoContentException e) {
+				throw new NoContentException(index, e.getMessage());
+			}
 			
-			Integer localPublicacaoId = this.localPublicacaoCache.get(item.getLocalPublicacao(), null);
-			
-			Integer palavraChaveId = this.palavraChaveCache.get(item.getPalavrasChaveDescritores(), null);
-			
-			Integer meioDivulgacaoId = this.meioDivulgacaoCache.get(item.getMeioDivulgacao(), null);
+			try {
+				materialId = this.writeMaterial(item, autorId, tipoMaterialId, editoraId, entidadeId, localPublicacaoId, palavraChaveId, meioDivulgacaoId);
+				// HELIO FAZER
+//				this.writeMaterialAutor(materialId, autorId); // atualizar apenas o autor id se a entrada ja existir
+//				this.writeMaterialPalavraChave(materialId, palavraChaveId); // atualizar apenas a palavra chave id se a entrada ja existir
+			} catch(SQLException e) {
+				throw new RecordInsertionException(index, e.getMessage());
+			}
 		}
 	}
 }

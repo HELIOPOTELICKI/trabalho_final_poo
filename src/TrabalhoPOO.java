@@ -46,12 +46,14 @@ public class TrabalhoPOO {
 		}
 
 		LocalCSVReader reader = new LocalCSVReader(app.settings.getCSVFile());
+		
+		// user modifies data...
 //		reader.write();
 		
 		ArrayList<DBRow> items = reader.getItems();
 		
 		Connection connection = DriverManager.getConnection(
-				"jdbc:mysql://localhost:3306/trabalho_final_poo", 
+				"jdbc:mysql://localhost:3306/trabalho_final_poo?allowMultiQueries=true", 
 				"root", 
 				""    );
 		
@@ -59,10 +61,12 @@ public class TrabalhoPOO {
 		
 		try {
 			databaseService.write();
-		} catch (NoContentError e) {
-			System.out.println(e);
+		} catch (NoContentException e) {
+			System.out.println(e.getIndex() + ": Campo " + e.getMessage() + " está vazio.");
 		} catch (SQLException e) {
 			System.out.println("Deu merda no banco");
+		} catch (RecordInsertionException e) {
+			System.out.println(e.getIndex() + ": Falha ao inserir registro " + e.getMessage());
 		}
 	}
 }

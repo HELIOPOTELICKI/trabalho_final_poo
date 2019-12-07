@@ -42,7 +42,7 @@ CREATE TABLE `editora` (
   `cd_editora` int(11) NOT NULL AUTO_INCREMENT,
   `nm_editora` varchar(50) NOT NULL,
   PRIMARY KEY (`cd_editora`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -97,6 +97,7 @@ CREATE TABLE `material` (
   `cd_editora` int(11) NOT NULL,
   `cd_entidade` int(11) NOT NULL,
   PRIMARY KEY (`cd_material`),
+  UNIQUE KEY `nm_titulo_UNIQUE` (`nm_titulo`),
   KEY `material_editora` (`cd_editora`),
   KEY `material_entidade` (`cd_entidade`),
   KEY `material_local_publicacao` (`cd_local_publicacao`),
@@ -107,7 +108,7 @@ CREATE TABLE `material` (
   CONSTRAINT `material_local_publicacao` FOREIGN KEY (`cd_local_publicacao`) REFERENCES `local_publicacao` (`cd_local_publicacao`),
   CONSTRAINT `material_tipo_divulgacao` FOREIGN KEY (`cd_tp_divulgacao`) REFERENCES `meio_divulgacao` (`tp_divulgacao`),
   CONSTRAINT `material_tipo_material` FOREIGN KEY (`cd_tp_material`) REFERENCES `tipo_material` (`tp_material`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=40 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -195,4 +196,4 @@ CREATE TABLE `tipo_material` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-12-05  0:22:44
+-- Dump completed on 2019-12-06 21:48:00

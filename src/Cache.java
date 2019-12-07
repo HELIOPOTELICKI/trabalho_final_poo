@@ -25,9 +25,9 @@ public class Cache {
 		return this;
 	}
 	
-	public Integer get(String key, SetInsertQueryValues setInsertQueryValues) throws SQLException, NoContentError {
+	public Integer get(String key, SetInsertQueryValues setInsertQueryValues) throws SQLException, NoContentException {
 		if(key.isEmpty()) {
-			throw new NoContentError("Valor vazio para a chave " + name);
+			throw new NoContentException(0, name);
 		}
 		
 		Integer authorId = this.cache.get(key);
@@ -51,7 +51,11 @@ public class Cache {
 			stmt = connection.prepareStatement(insertQuery, Statement.RETURN_GENERATED_KEYS);
 			
 			if(setInsertQueryValues != null) {
-				setInsertQueryValues.apply(stmt);
+				SQLException insertValuesException = setInsertQueryValues.apply(stmt);
+				
+				if(insertValuesException != null) {
+					throw insertValuesException;
+				}
 			} else {
 				stmt.setString(1, key);
 			}

@@ -1,6 +1,7 @@
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 @FunctionalInterface
 interface SetInsertQueryValues {
-    void apply(PreparedStatement stmt);
+	SQLException apply(PreparedStatement stmt);
 }
