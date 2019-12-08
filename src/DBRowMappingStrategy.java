@@ -1,3 +1,12 @@
+/**
+ * Trabalho Final - POO
+ * Equipe:
+ * 
+ * Back-End:  Hélio Potelicki & Luis Felipe Zaguini
+ * Front-End: Murilo Eger & Pedro Roweder
+ *
+ */
+
 import com.opencsv.bean.ColumnPositionMappingStrategy;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 
@@ -23,7 +32,6 @@ public class DBRowMappingStrategy extends ColumnPositionMappingStrategy<DBRow> {
     
     @Override
     public String[] generateHeader(DBRow bean) throws CsvRequiredFieldEmptyException {
-    	// TODO Auto-generated method stub
     	return HEADER;
 	}
 

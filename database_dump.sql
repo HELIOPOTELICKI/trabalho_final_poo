@@ -108,7 +108,7 @@ CREATE TABLE `material` (
   CONSTRAINT `material_local_publicacao` FOREIGN KEY (`cd_local_publicacao`) REFERENCES `local_publicacao` (`cd_local_publicacao`),
   CONSTRAINT `material_tipo_divulgacao` FOREIGN KEY (`cd_tp_divulgacao`) REFERENCES `meio_divulgacao` (`tp_divulgacao`),
   CONSTRAINT `material_tipo_material` FOREIGN KEY (`cd_tp_material`) REFERENCES `tipo_material` (`tp_material`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=40 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=71 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -196,4 +196,4 @@ CREATE TABLE `tipo_material` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-12-06 21:48:00
+-- Dump completed on 2019-12-07 21:34:29

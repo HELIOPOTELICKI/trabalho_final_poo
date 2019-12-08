@@ -1,3 +1,12 @@
+/**
+ * Trabalho Final - POO
+ * Equipe:
+ * 
+ * Back-End:  Hélio Potelicki & Luis Felipe Zaguini
+ * Front-End: Murilo Eger & Pedro Roweder
+ *
+ */
+
 import com.opencsv.bean.CsvBindByPosition;
 
 public class DBRow {
