@@ -1,10 +1,6 @@
 /**
  * Trabalho Final - POO
- * Equipe:
- * 
- * Back-End: Hélio Potelicki & Luis Felipe Zaguini
- * Front-End: Murilo Eger & Pedro Roweder
- *
+ * Equipe: Hélio Potelicki & Luis Felipe Zaguini 
  */
 
 import org.apache.commons.configuration2.Configuration;
@@ -27,6 +23,10 @@ public class Settings {
 		builder.setAutoSave(true);
 		
 		this.config = builder.getConfiguration();
+	}
+	
+	public void clear() {
+		this.config.clear();
 	}
 	
 	public String getCSVFile() {

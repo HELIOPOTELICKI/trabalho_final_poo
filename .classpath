@@ -11,5 +11,7 @@
 	<classpathentry kind="lib" path="C:/Users/Potelicky/Documents/ECLIPSE Projs/TrabalhoPOO/lib/opencsv-5.0.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Potelicky/Documents/ECLIPSE Projs/TrabalhoPOO/lib/commons-collections4-4.4.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Potelicky/Documents/ECLIPSE Projs/TrabalhoPOO/lib/mysql-connector-java-5.1.48.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Potelicky/Documents/ECLIPSE Projs/TrabalhoPOO/lib/jgoodies-common-1.8.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Potelicky/Documents/ECLIPSE Projs/TrabalhoPOO/lib/jgoodies-forms-1.8.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -1,10 +1,6 @@
 /**
  * Trabalho Final - POO
- * Equipe:
- * 
- * Back-End:  Hélio Potelicki & Luis Felipe Zaguini
- * Front-End: Murilo Eger & Pedro Roweder
- *
+ * Equipe: Hélio Potelicki & Luis Felipe Zaguini 
  */
 
 public class RecordInsertionException extends Exception {

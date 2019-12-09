@@ -1,9 +1,6 @@
 /**
- * Trabalho Final - POO Equipe:
- * 
- * Back-End:  Hélio Potelicki & Luis Felipe Zaguini 
- * Front-End: Murilo Eger & Pedro Roweder
- *
+ * Trabalho Final - POO
+ * Equipe: Hélio Potelicki & Luis Felipe Zaguini 
  */
 
 import java.sql.Connection;
@@ -116,6 +113,10 @@ public class DatabaseService {
 
 				if (item.getAnoPublicacao().contentEquals("")) {
 					throw new NoContentException(0, "Ano de Publicação");
+				}
+				
+				if (item.getEdicao().contentEquals("")) {
+					throw new NoContentException(0, "Edição");
 				}
 
 				if (item.getPaginasMinutos().contentEquals("")) {
